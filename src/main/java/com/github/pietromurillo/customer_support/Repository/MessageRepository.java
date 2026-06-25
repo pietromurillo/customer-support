@@ -1,11 +1,11 @@
-package Repository;
+package com.github.pietromurillo.customer_support.Repository;
 
-import Model.Message;
+import com.github.pietromurillo.customer_support.Model.Message;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface MessageRepository extends JpaRepository<Message, Long> {
 
-    
+
     List<Message> findByUserId(Long userId);
 }

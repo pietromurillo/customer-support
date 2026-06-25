@@ -1,4 +1,4 @@
-package Model;
+package com.github.pietromurillo.customer_support.Model;
 
 import jakarta.persistence.*;
 import lombok.Data;

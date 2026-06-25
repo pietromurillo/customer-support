@@ -1,6 +1,6 @@
-package Repository;
+package com.github.pietromurillo.customer_support.Repository;
 
-import Model.User;
+import com.github.pietromurillo.customer_support.Model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
