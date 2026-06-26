@@ -3,42 +3,228 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suporte ao Cliente</title>
+    <title>Suporte Inteligente</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f9; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        #auth-container, #chat-container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 350px; margin-bottom: 20px; }
-        #chat-container { display: none; }
-        #messages { height: 250px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 4px; background: #fafafa; }
-        .message { margin: 5px 0; padding: 8px; border-radius: 4px; max-width: 80%; }
-        .CLIENT { background-color: #d1e7dd; align-self: flex-end; margin-left: auto; text-align: right; }
-        .BOT { background-color: #e2e3e5; align-self: flex-start; }
-        .error { color: red; font-size: 14px; margin-top: 5px; }
-        input, button { width: 100%; padding: 10px; margin: 5px 0; box-sizing: border-box; border-radius: 4px; border: 1px solid #ccc; }
-        button { background-color: #0d6efd; color: white; border: none; cursor: pointer; }
-        button:hover { background-color: #0b5ed7; }
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-client: #e0e7ff;
+            --text-client: #1e1b4b;
+            --bg-bot: #f3f4f6;
+            --text-bot: #1f2937;
+            --error: #ef4444;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e0e7ff 0%, #f3f4f6 100%);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Container de Autenticação */
+        #auth-container {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 360px;
+            text-align: center;
+        }
+
+        #auth-container h2 {
+            color: #111827;
+            margin-bottom: 24px;
+            font-size: 24px;
+        }
+
+        /* Container do Chat */
+        #chat-container {
+            display: none;
+            background: white;
+            width: 100%;
+            max-width: 450px;
+            height: 600px;
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            background: var(--primary);
+            color: white;
+            padding: 20px;
+            font-weight: 600;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .chat-header .status-dot {
+            width: 10px;
+            height: 10px;
+            background-color: #10b981;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        #messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background-color: #fafafa;
+        }
+
+        .message {
+            padding: 12px 16px;
+            border-radius: 16px;
+            max-width: 75%;
+            font-size: 15px;
+            line-height: 1.4;
+            word-wrap: break-word;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .CLIENT {
+            background-color: var(--bg-client);
+            color: var(--text-client);
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .BOT {
+            background-color: var(--bg-bot);
+            color: var(--text-bot);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        .chat-input-area {
+            padding: 16px;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Inputs e Botões padronizados */
+        input {
+            width: 100%;
+            padding: 12px 16px;
+            margin: 8px 0;
+            box-sizing: border-box;
+            border-radius: 8px;
+            border: 1px solid #d1e5f7;
+            font-size: 14px;
+            transition: all 0.2s;
+            background-color: #f9fafb;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        #message-input {
+            margin: 0;
+            flex: 1;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: #4b5563;
+            border: 1px solid #d1d5db;
+        }
+
+        .btn-secondary:hover {
+            background-color: #f3f4f6;
+        }
+
+        .btn-send {
+            width: auto;
+            margin: 0;
+            padding: 0 24px;
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-send:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .error {
+            color: var(--error);
+            font-size: 13px;
+            margin-top: 6px;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
 
 <div id="auth-container">
-    <h2>Acesso ao Suporte</h2>
+    <h2>Área de Suporte</h2>
     <input type="text" id="username" placeholder="Usuário">
     <input type="password" id="password" placeholder="Senha">
-    <button onclick="handleAuth('/auth/login')">Entrar</button>
-    <button onclick="handleAuth('/auth/register')" style="background-color: #198754;">Cadastrar Novo</button>
+    <button class="btn-primary" onclick="handleAuth('/auth/login')">Entrar</button>
+    <button class="btn-secondary" onclick="handleAuth('/auth/register')">Criar Conta</button>
     <div id="auth-error" class="error"></div>
 </div>
 
 <div id="chat-container">
-    <h2 id="chat-welcome">Chat de Suporte</h2>
+    <div class="chat-header">
+        <span class="status-dot"></span>
+        <span id="chat-welcome">Suporte Digital</span>
+    </div>
     <div id="messages"></div>
-    <input type="text" id="message-input" placeholder="Digite sua mensagem...">
-    <button onclick="sendMessage()">Enviar</button>
-    <div id="chat-error" class="error"></div>
+    <div class="chat-input-area">
+        <input type="text" id="message-input" placeholder="Digite sua mensagem e pressione Enter..." onkeypress="if(event.key === 'Enter') sendMessage()">
+        <button class="btn-send" onclick="sendMessage()">Enviar</button>
+    </div>
+    <div id="chat-error" class="error" style="padding: 0 16px 10px 16px;"></div>
 </div>
 
 <script>
-    let currentUserId = 1; // Simulação de ID do usuário logado para os testes
+    let currentUserId = 1;
 
     async function handleAuth(url) {
         const username = document.getElementById('username').value;
@@ -56,15 +242,16 @@
             const result = await response.text();
 
             if (response.ok) {
-                alert(result);
                 if(url.includes('login')) {
                     document.getElementById('auth-container').style.display = 'none';
-                    document.getElementById('chat-container').style.display = 'block';
-                    document.getElementById('chat-welcome').innerText = `Olá, ${username}`;
+                    document.getElementById('chat-container').style.display = 'flex';
+                    document.getElementById('chat-welcome').innerText = `Suporte — Olá, ${username}`;
                     loadHistory();
+                } else {
+                    alert("Cadastro realizado com sucesso! Agora faça o seu login.");
                 }
             } else {
-                errorDiv.innerText = result; // Exibe o erro vindo do backend
+                errorDiv.innerText = result;
             }
         } catch (err) {
             errorDiv.innerText = "Erro de conexão com o servidor.";
@@ -79,7 +266,6 @@
 
         if(!content.trim()) return;
 
-        // Adiciona a mensagem do cliente na tela antes de enviar
         appendMessage(content, 'CLIENT');
         input.value = '';
 
