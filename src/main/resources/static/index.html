@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suporte ao Cliente</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        #auth-container, #chat-container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 350px; margin-bottom: 20px; }
+        #chat-container { display: none; }
+        #messages { height: 250px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 4px; background: #fafafa; }
+        .message { margin: 5px 0; padding: 8px; border-radius: 4px; max-width: 80%; }
+        .CLIENT { background-color: #d1e7dd; align-self: flex-end; margin-left: auto; text-align: right; }
+        .BOT { background-color: #e2e3e5; align-self: flex-start; }
+        .error { color: red; font-size: 14px; margin-top: 5px; }
+        input, button { width: 100%; padding: 10px; margin: 5px 0; box-sizing: border-box; border-radius: 4px; border: 1px solid #ccc; }
+        button { background-color: #0d6efd; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #0b5ed7; }
+    </style>
+</head>
+<body>
+
+<div id="auth-container">
+    <h2>Acesso ao Suporte</h2>
+    <input type="text" id="username" placeholder="Usuário">
+    <input type="password" id="password" placeholder="Senha">
+    <button onclick="handleAuth('/auth/login')">Entrar</button>
+    <button onclick="handleAuth('/auth/register')" style="background-color: #198754;">Cadastrar Novo</button>
+    <div id="auth-error" class="error"></div>
+</div>
+
+<div id="chat-container">
+    <h2 id="chat-welcome">Chat de Suporte</h2>
+    <div id="messages"></div>
+    <input type="text" id="message-input" placeholder="Digite sua mensagem...">
+    <button onclick="sendMessage()">Enviar</button>
+    <div id="chat-error" class="error"></div>
+</div>
+
+<script>
+    let currentUserId = 1; // Simulação de ID do usuário logado para os testes
+
+    async function handleAuth(url) {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const errorDiv = document.getElementById('auth-error');
+        errorDiv.innerText = '';
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+
+            const result = await response.text();
+
+            if (response.ok) {
+                alert(result);
+                if(url.includes('login')) {
+                    document.getElementById('auth-container').style.display = 'none';
+                    document.getElementById('chat-container').style.display = 'block';
+                    document.getElementById('chat-welcome').innerText = `Olá, ${username}`;
+                    loadHistory();
+                }
+            } else {
+                errorDiv.innerText = result; // Exibe o erro vindo do backend
+            }
+        } catch (err) {
+            errorDiv.innerText = "Erro de conexão com o servidor.";
+        }
+    }
+
+    async function sendMessage() {
+        const input = document.getElementById('message-input');
+        const content = input.value;
+        const errorDiv = document.getElementById('chat-error');
+        errorDiv.innerText = '';
+
+        if(!content.trim()) return;
+
+        // Adiciona a mensagem do cliente na tela antes de enviar
+        appendMessage(content, 'CLIENT');
+        input.value = '';
+
+        try {
+            const response = await fetch(`/chat/send?userId=${currentUserId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain' },
+                body: content
+            });
+
+            if (response.ok) {
+                const botMsg = await response.json();
+                appendMessage(botMsg.content, 'BOT');
+            } else {
+                const errorMsg = await response.text();
+                errorDiv.innerText = errorMsg;
+            }
+        } catch (err) {
+            errorDiv.innerText = "Erro ao enviar mensagem.";
+        }
+    }
+
+    async function loadHistory() {
+        try {
+            const response = await fetch(`/chat/history?userId=${currentUserId}`);
+            if (response.ok) {
+                const history = await response.json();
+                history.forEach(msg => appendMessage(msg.content, msg.sender));
+            }
+        } catch (err) {
+            console.error("Erro ao carregar histórico", err);
+        }
+    }
+
+    function appendMessage(text, sender) {
+        const messagesDiv = document.getElementById('messages');
+        const msgEl = document.createElement('div');
+        msgEl.className = `message ${sender}`;
+        msgEl.innerText = text;
+        messagesDiv.appendChild(msgEl);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+</script>
+</body>
+</html>
